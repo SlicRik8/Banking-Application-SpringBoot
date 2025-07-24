@@ -2,6 +2,7 @@ package com.bankingApp.bankingApp.controller;
 
 
 import com.bankingApp.bankingApp.dto.AccountDto;
+import com.bankingApp.bankingApp.entity.Account;
 import com.bankingApp.bankingApp.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +66,12 @@ public class AccountController {
         AccountDto accountDto = accountService.withdraw(id,amount);
 
         return ResponseEntity.ok(accountDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        accountService.deleteAccount(id);
+        return  ResponseEntity.ok("Account deletion successful");
     }
 
 }
