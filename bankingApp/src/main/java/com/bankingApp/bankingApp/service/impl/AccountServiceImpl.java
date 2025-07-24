@@ -7,6 +7,9 @@ import com.bankingApp.bankingApp.repository.AccountRepository;
 import com.bankingApp.bankingApp.service.AccountService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class AccountServiceImpl implements AccountService {
 
@@ -48,5 +51,30 @@ public class AccountServiceImpl implements AccountService {
         //save it in db
         Account savedAccount = accountRepository.save(account);
         return AccountMapper.mapToAccountDto(savedAccount);
+    }
+
+    @Override
+    public AccountDto withdraw(Long id, double amount) {
+        Account account = accountRepository
+                .findById(id)
+                .orElseThrow(() -> new RuntimeException("Account does not exist"));
+
+        if (amount > account.getBalance()) {
+            throw new RuntimeException("Insufficient Balance");
+        }
+        double total = account.getBalance() - amount;
+        account.setBalance(total);
+        Account savedAccount = accountRepository.save(account);
+        return AccountMapper.mapToAccountDto(savedAccount);
+    }
+
+    @Override
+    public List<AccountDto> getAllAccounts() {
+        List<Account> accountList = accountRepository.findAll();
+
+        //converting the entity accountlist to account dto using account mapper and then returning the dto list
+        return accountList.stream().map((account) -> AccountMapper.mapToAccountDto(account))
+                .collect(Collectors.toList());
+
     }
 }

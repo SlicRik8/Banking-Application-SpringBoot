@@ -4,7 +4,11 @@ import com.bankingApp.bankingApp.dto.AccountDto;
 
 import com.bankingApp.bankingApp.repository.AccountRepository;
 
+import java.util.List;
+
 public interface AccountService {
+
+
 
 
     AccountDto createAccount(AccountDto accountDto);
@@ -12,4 +16,8 @@ public interface AccountService {
     AccountDto getAccountById(Long id);
 
     AccountDto deposit(Long id, double amount);
+
+    AccountDto withdraw(Long id,double amount);
+
+    List<AccountDto> getAllAccounts();
 }
