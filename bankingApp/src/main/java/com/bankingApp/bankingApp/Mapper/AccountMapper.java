@@ -9,7 +9,9 @@ public class AccountMapper {
         Account account = new Account(
                 accountDto.id(),
                 accountDto.accountHolderName(),
-                accountDto.balance()
+                accountDto.balance(),
+                accountDto.transactions()
+
         );
         return  account;
     }
@@ -18,7 +20,8 @@ public class AccountMapper {
         AccountDto accountDto = new AccountDto(
                 account.getId(),
                 account.getAccountHolderName(),
-                account.getBalance()
+                account.getBalance(),
+                account.getTransactions()
         );
         return accountDto;
     }
