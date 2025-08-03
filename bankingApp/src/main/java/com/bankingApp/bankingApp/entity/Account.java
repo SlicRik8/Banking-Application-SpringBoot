@@ -17,6 +17,7 @@ import java.util.List;
 @Entity
 @Table(name = "accounts")
 public class Account {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,8 +30,15 @@ public class Account {
     @JsonManagedReference
     private List<Transaction> transactions = new ArrayList<>();
 
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
-    public Account(String s, double balance) {
 
+    public Account(Long id, String accountHolderName, double balance, List<Transaction> transactions) {
+        this.id = id;
+        this.accountHolderName = accountHolderName;
+        this.balance = balance;
+        this.transactions = transactions;
     }
 }

@@ -2,13 +2,17 @@ package com.bankingApp.bankingApp.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +26,11 @@ public class Transaction {
     @JoinColumn(name = "account_id",nullable = false)
     @JsonBackReference
     private Account account;
+
+    public Transaction(String type, double amount, Account account) {
+        this.type = type;
+        this.amount = amount;
+        this.timestamp = LocalDateTime.now(); // sets current time
+        this.account = account;
+    }
 }
