@@ -22,15 +22,12 @@ import java.util.Map;
 @AllArgsConstructor
 public class AuthController {
     private UserService userService;
-
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request){
         userService.register(request);
         return ResponseEntity.ok("User registered successfully");
 
     }
-
-
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request){

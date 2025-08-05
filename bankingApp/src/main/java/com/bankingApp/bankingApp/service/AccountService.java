@@ -26,5 +26,6 @@ public interface AccountService {
 
     void deleteAccount(Long id);
     AccountDto transferMoney(TransferDto request);
+    public AccountDto getAccountByUsername(String username);
 
 }

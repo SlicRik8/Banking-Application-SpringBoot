@@ -58,6 +58,8 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+
+
     @Override
     public AccountDto getAccountById(Long id) {
         Account account = accountRepository
@@ -67,6 +69,14 @@ public class AccountServiceImpl implements AccountService {
 
         return AccountMapper.mapToAccountDto(account);
 
+    }
+
+    public AccountDto getAccountByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Account account = accountRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        return AccountMapper.mapToAccountDto(account);
     }
 
     @Override
@@ -175,63 +185,52 @@ public class AccountServiceImpl implements AccountService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-
-
         Account fromAccount = user.getAccount();
-        if(fromAccount ==null){
+        if (fromAccount == null) {
             throw new RuntimeException("No Account associated with the logged user");
-
         }
 
         if (fromAccount.getId().equals(request.toAccountId())) {
             throw new AccountException("Cannot transfer money to the same account");
         }
 
-
-
-        // Validate amount
         if (request.amount() <= 0) {
             throw new AccountException("Transfer amount must be greater than 0");
         }
 
         Account toAccount = accountRepository.findById(request.toAccountId())
-                .orElseThrow(() ->new AccountException("Destination Account Not Found"));
+                .orElseThrow(() -> new AccountException("Destination Account Not Found"));
 
-
-        if(fromAccount.getBalance()< request.amount()){
+        if (fromAccount.getBalance() < request.amount()) {
             throw new AccountException("Insufficient funds");
         }
 
-        // deduct amount from source
+        double fromBalance = fromAccount.getBalance();
+        double toBalance = toAccount.getBalance();
+        double transferAmount = request.amount();
 
-        fromAccount.setBalance(fromAccount.getBalance()-request.amount());
-
-        //add amount to destination account
-        toAccount.setBalance(fromAccount.getBalance()+ request.amount());
+        fromAccount.setBalance(fromBalance - transferAmount);
+        toAccount.setBalance(toBalance + transferAmount);
 
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
 
-
         Transaction debitTransaction = new Transaction();
         debitTransaction.setAccount(fromAccount);
-        debitTransaction.setType("Transfer to account "+ toAccount.getId());
-        debitTransaction.setAmount(-request.amount());
+        debitTransaction.setType("Transfer to account " + toAccount.getId());
+        debitTransaction.setAmount(-transferAmount);
         debitTransaction.setTimestamp(LocalDateTime.now());
         transactionRepository.save(debitTransaction);
 
         Transaction creditTransaction = new Transaction();
         creditTransaction.setAccount(toAccount);
-        creditTransaction.setType("Transfer from account "+ fromAccount.getId());
-        creditTransaction.setAmount(request.amount());
+        creditTransaction.setType("Transfer from account " + fromAccount.getId());
+        creditTransaction.setAmount(transferAmount);
         creditTransaction.setTimestamp(LocalDateTime.now());
         transactionRepository.save(creditTransaction);
 
         AccountDto accountDto = AccountMapper.mapToAccountDto(fromAccount);
         return accountDto;
-
-
-
-
     }
+
 }

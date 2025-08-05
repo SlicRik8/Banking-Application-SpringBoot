@@ -3,6 +3,7 @@ package com.bankingApp.bankingApp.Security;
 import com.bankingApp.bankingApp.service.CustomUserDetailService;
 import com.bankingApp.bankingApp.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +28,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()  // Allow register/login

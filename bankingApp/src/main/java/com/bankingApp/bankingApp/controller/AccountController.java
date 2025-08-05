@@ -37,6 +37,12 @@ public class AccountController {
         return ResponseEntity.ok(accountDto);
     }
 
+    @GetMapping("/user/{username}")
+    public ResponseEntity<AccountDto> getAccountByUsername(@PathVariable String username) {
+        AccountDto accountDto = accountService.getAccountByUsername(username);
+        return ResponseEntity.ok(accountDto);
+    }
+
     //add account rest api
     @PostMapping("/create")
     public ResponseEntity<AccountDto> addAccount(@RequestParam String username, @RequestBody AccountDto accountDto){
